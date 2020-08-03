@@ -43,7 +43,7 @@ class Syncare(App):
 
 
 class patient:
-    def __init__(self, name):
+    def __init__(self, name, ):
         self.name = name
 
 
