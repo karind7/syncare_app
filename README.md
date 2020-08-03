@@ -1,6 +1,6 @@
 # syncare_app
-Kivy	1.11.1	1.11.1
-Kivy-Garden	0.1.4	0.1.4
+# Kivy	1.11.1	1.11.1
+# Kivy-Garden	0.1.4	0.1.4
 cryptography	3.0	3.0
 firebase	3.0.1	3.0.1
 firebase-admin	4.3.0	4.3.0
