@@ -1,0 +1,23 @@
+<MyGrid>:
+    GridLayout:
+        cols:1
+        size: root.width, root.height
+
+        GridLayout:
+            cols:2
+
+            Label:
+                text: "User Name: "
+
+            TextInput:
+                multinline:False
+
+            Label:
+                text: "password: "
+
+            TextInput:
+                multiline:False
+
+        Button:
+            text:"Log in"
+            on_press: app.btn()
