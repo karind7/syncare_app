@@ -1,4 +1,8 @@
 <MyGrid>:
+
+    user_name: user_name
+    password: password
+
     GridLayout:
         cols:1
         size: root.width, root.height
@@ -7,12 +11,14 @@
             cols:2
 
             Label:
+                id: user_name
                 text: "User Name: "
 
             TextInput:
                 multinline:False
 
             Label:
+                id: password
                 text: "password: "
 
             TextInput:
