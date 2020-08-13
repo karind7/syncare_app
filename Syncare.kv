@@ -11,19 +11,22 @@
             cols:2
 
             Label:
-                id: user_name
                 text: "User Name: "
 
             TextInput:
-                multinline:False
+                id: user_name
+                multinline: False
 
             Label:
-                id: password
                 text: "password: "
 
             TextInput:
-                multiline:False
+                id: password
+                multiline: False
 
         Button:
             text:"Log in"
-            on_press: app.btn()
+            on_press: root.log_in()
+
+        Button:
+            text:"sign up"
