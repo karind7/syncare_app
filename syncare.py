@@ -9,8 +9,10 @@ from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 
 # firebase = firebase.FirebaseApplication('https://syncare-6b9b8.firebaseio.com/', None)
-# data = {'User name': 'mor',
-#         'Password ': "1234",
+# data = {'User name': 'karind',
+#         'Name': 'karin',
+#         'Password': '1234',
+#         'mail:' karin'
 #         }
 # result = firebase.post('/syncare-6b9b8:/user/', data)
 # result = firebase.get('/syncare-6b9b8:/user/', '')
@@ -19,17 +21,38 @@ from kivy.uix.label import Label
 
 
 class User:
-    def __init__(self, user_name = None, password = None):
+    def __init__(self, user_name=None, password=None, name=None, email=None):
+        self.name = name
         self.user_name = user_name
         self.password = password
+        self.email = email
 
-    def log_in(self):
-        if self.user_name is not None:
+        if self.name and self.password and self.user_name and self.email is not None:
+            user_name_validity = True
             base = firebase.FirebaseApplication('https://syncare-6b9b8.firebaseio.com/', None)
             result = base.get('/syncare-6b9b8:/user/', '')
             data = pd.DataFrame.from_dict(result, orient='index')
             data.reset_index(drop=True, inplace=True)
-            for i in range((len(data.columns))):
+            for i in range((len(data.index))):
+                if data['User name'][i] == self.user_name:
+                    user_name_validity = False
+                    invalid_user_name()
+            if user_name_validity:
+                base = firebase.FirebaseApplication('https://syncare-6b9b8.firebaseio.com/', None)
+                data = {'User name': self.user_name,
+                        'Name': self.name,
+                        'Password ': self.password,
+                        'mail': self.email
+                        }
+                base.post('/syncare-6b9b8:/user/', data)
+
+    def does_user_exist(self):
+        if self.user_name:
+            base = firebase.FirebaseApplication('https://syncare-6b9b8.firebaseio.com/', None)
+            result = base.get('/syncare-6b9b8:/user/', '')
+            data = pd.DataFrame.from_dict(result, orient='index')
+            data.reset_index(drop=True, inplace=True)
+            for i in range((len(data.index))):
                 if data['User name'][i] == self.user_name and data['Password '][i] == self.password:
                     return True
             return False
@@ -53,13 +76,12 @@ class LoginWindow(Screen):
         self.password.text = ""
 
     def log_in(self):
-        if User(self.user_name.text, self.password.text).log_in():
+        if User(self.user_name.text, self.password.text).does_user_exist():
             UserWindow.user = User(self.user_name.text, self.password.text)
             sm.current = "main"
         else:
             invalid_login()
         self.reset()
-
 
     @staticmethod
     def create_account():
@@ -67,10 +89,24 @@ class LoginWindow(Screen):
 
 
 class CreateAccountWindow(Screen):
+    namee = ObjectProperty(None)
+    user_name = ObjectProperty(None)
+    email = ObjectProperty(None)
+    password = ObjectProperty(None)
+
+    def submit(self):
+        User(self.namee.text, self.user_name.text, self.password.text, self.email.text)
+        self.clean()
 
     @staticmethod
     def log_in():
         sm.current = "login"
+
+    def clean(self):
+        self.namee.text = ""
+        self.user_name.text = ""
+        self.password.text = ""
+        self.email.text = ""
 
 
 class UserWindow(Screen):
@@ -104,6 +140,13 @@ sm.current = "login"
 def invalid_login():
     pop = Popup(title='Invalid Login',
                 content=Label(text='Invalid username or password.'),
+                size_hint=(None, None), size=(400, 400))
+    pop.open()
+
+
+def invalid_user_name():
+    pop = Popup(title='invalid Username',
+                content=Label(text='username already exists\n please choose another.'),
                 size_hint=(None, None), size=(400, 400))
     pop.open()
 
