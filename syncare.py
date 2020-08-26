@@ -12,7 +12,7 @@ from kivy.uix.label import Label
 # data = {'User name': 'karind',
 #         'Name': 'karin',
 #         'Password': '1234',
-#         'mail:' karin'
+#         'mail:' 'karin'
 #         }
 # result = firebase.post('/syncare-6b9b8:/user/', data)
 # result = firebase.get('/syncare-6b9b8:/user/', '')
@@ -62,8 +62,15 @@ class User:
 
 
 class Patient:
-    def __init__(self, name):
+    def __init__(self, name, authorized_user):
         self.name = name
+        self.authorized_users = [authorized_user.user_name]
+        if self.name is not None:
+            base = firebase.FirebaseApplication('https://syncare-6b9b8.firebaseio.com/', None)
+            data = {'Name': self.name,
+                    'authorized users': self.authorized_users
+                    }
+            base.post('/syncare-6b9b8:/patient/', data)
 
 
 class LoginWindow(Screen):
@@ -120,9 +127,24 @@ class UserWindow(Screen):
     def log_out():
         sm.current = "login"
 
+    @staticmethod
+    def create_patient_sheet():
+        sm.current = "create_patient_sheet"
+
+    @staticmethod
+    def enter_patient_sheet():
+        sm.current = "patient_sheet"
+
     def on_enter(self, *args):
-        self.n.text = "Account Name: " + self.user.user_name
-        self.password.text = "Created On: " + self.user.password
+        pass
+
+
+class PatientSheet(Screen):
+    pass
+
+
+class CreatePatientSheet(Screen):
+    pass
 
 
 class WindowManager(ScreenManager):
@@ -131,7 +153,8 @@ class WindowManager(ScreenManager):
 
 kv = Builder.load_file("Syncare.kv")
 sm = WindowManager()
-screens = [LoginWindow(name="login"), CreateAccountWindow(name="create"), UserWindow(name="main")]
+screens = [LoginWindow(name="login"), CreateAccountWindow(name="create"), UserWindow(name="main"),
+           PatientSheet(name="patient_sheet"), CreatePatientSheet(name="create_patient_sheet")]
 for screen in screens:
     sm.add_widget(screen)
 sm.current = "login"
