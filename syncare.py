@@ -62,12 +62,14 @@ class User:
 
 
 class Patient:
-    def __init__(self, name, authorized_user):
+    def __init__(self, name, age, authorized_user):
         self.name = name
+        self.age = age
         self.authorized_users = [authorized_user.user_name]
         if self.name is not None:
             base = firebase.FirebaseApplication('https://syncare-6b9b8.firebaseio.com/', None)
             data = {'Name': self.name,
+                    'Age': self.age,
                     'authorized users': self.authorized_users
                     }
             base.post('/syncare-6b9b8:/patient/', data)
@@ -121,7 +123,7 @@ class UserWindow(Screen):
     n = ObjectProperty(None)
     password = ObjectProperty(None)
 
-    user = User()
+    # user = User()
 
     @staticmethod
     def log_out():
@@ -129,6 +131,7 @@ class UserWindow(Screen):
 
     @staticmethod
     def create_patient_sheet():
+        CreatePatientSheet.user = UserWindow.user
         sm.current = "create_patient_sheet"
 
     @staticmethod
@@ -136,7 +139,7 @@ class UserWindow(Screen):
         sm.current = "patient_sheet"
 
     def on_enter(self, *args):
-        pass
+        self.hello.text = "Hello " + self.user.user_name
 
 
 class PatientSheet(Screen):
@@ -144,7 +147,15 @@ class PatientSheet(Screen):
 
 
 class CreatePatientSheet(Screen):
-    pass
+    user = User()
+
+    @staticmethod
+    def back():
+        UserWindow.user = CreatePatientSheet.user
+        sm.current = "main"
+
+    def submit(self):
+        Patient(self.patient_name.text, self.age.text, CreatePatientSheet.user)
 
 
 class WindowManager(ScreenManager):
